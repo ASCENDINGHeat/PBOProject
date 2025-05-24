@@ -1,9 +1,26 @@
+import sqlite3
 import hashlib
+
 class Login:
     def __init__(self, Username, Email, Password):
         self.Username = Username
         self.Email = Email
         self.__Password = self.hash_password(Password)
+        self.db_name = f"{Email}.db"  # Setiap user punya database sendiri
+        self.conn = sqlite3.connect(self.db_name)
+        self.cursor = self.conn.cursor()
+        self.create_table()
+
+    def create_table(self):
+        with self.conn:
+            self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS Pengguna (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                UserName TEXT NOT NULL,
+                Email TEXT UNIQUE NOT NULL,
+                Password TEXT NOT NULL
+            )
+            """)
 
     # Method untuk hash password
     def hash_password(self, password):
@@ -39,24 +56,40 @@ class Login:
         self.set_Username()
         self.set_Email()
         self.set_Password()
+        
+        with self.conn:
+            self.cursor.execute("INSERT INTO Pengguna (UserName, Email, Password) VALUES (?, ?, ?)",
+                                (self.Username, self.Email, self.__Password))
         print("Registrasi berhasil!")
-
+    
+    
     # Method Login
     def Login(self):
-        username = input("Masukkan Username: ")
+        email = input("Masukkan Email: ")
         password = input("Masukkan Password: ")
+        
+        db_name = f"{email}.db"  # Cek database user tertentu
+        conn = sqlite3.connect(db_name)
+        cursor = conn.cursor()
 
-        if username == self.Username and self.VerifPassword(password):
+        cursor.execute("SELECT Password FROM Pengguna WHERE Email = ?", (email,))
+        data = cursor.fetchone()
+
+        if data and data[0] == self.hash_password(password):
             print("Login berhasil!")
         else:
-            print("Login gagal. Username atau password salah.")
+            print("Login gagal. Email atau password salah.")
 
     # Method Ganti Password
     def GantiPassword(self):
         current_pw = input("Masukkan Password lama: ")
         if self.VerifPassword(current_pw):
             new_pw = input("Masukkan Password baru: ")
-            self.__Password = self.hash_password(new_pw)
+            hashed_pw = self.hash_password(new_pw)
+
+            with self.conn:
+                self.cursor.execute("UPDATE Pengguna SET Password = ? WHERE Email = ?", (hashed_pw, self.Email))
+
             print("Password berhasil diubah.")
         else:
             print("Password lama salah.")
