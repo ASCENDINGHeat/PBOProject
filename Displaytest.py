@@ -1,24 +1,26 @@
 from PyQt6 import uic
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem
 from PyQt6.QtCore import QDateTime
-from PBOTest import tugas, load_tugas, save_all_tugas, add_tugas
+from PBOTest import tugas, load_tugas, save_all_tugas, add_tugas, sorting_tugas_deadline
+from qt_material import apply_stylesheet
 
 class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("UItest.ui", self)
         self.stackedWidget.setCurrentIndex(0)
-        self.pushButtonLOGIN.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(1))
+        self.pushButtonLOGIN.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(1), self.viewAttribute()))
         self.pushButtonFILL.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(2))
 
         self.pushButtonSubmit.clicked.connect(self.fillAtrribute)
-        self.pushButtonView.clicked.connect(self.viewAttribute)
-        self.pushButtonBack.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(1))
-        self.pushButtonBack_2.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(1))
+        self.pushButtonView.clicked.connect(self.viewSelectedTugas)
+        self.pushButtonBack.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(1), self.viewAttribute()))
+        self.pushButtonBack_2.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(1), self.viewAttribute()))
 
-        self.pushButtonEdit.clicked.connect(self.editTugas)
+        self.pushButtonEdit.clicked.connect(self.editTugas) 
         self.pushButtonSave.clicked.connect(self.saveEditedTugas)
         self.pushButtonDelete.clicked.connect(self.deleteTugas)
+        self.pushButtonSORT.clicked.connect(sorting_tugas_deadline(self.tugas_list))
 
         self.tugas_list = []
         self.selected_row = None
@@ -38,19 +40,28 @@ class MyWindow(QMainWindow):
     def viewAttribute(self):
         self.tugas_list = load_tugas()
         self.tableWidget.setRowCount(len(self.tugas_list))
-        self.tableWidget.setColumnCount(1)
-        self.tableWidget.setHorizontalHeaderLabels(["Judul"])
+        self.tableWidget.setColumnCount(3)
+        self.tableWidget.setHorizontalHeaderLabels(["Judul", "Deadline","Status"])
         for row, t in enumerate(self.tugas_list):
             self.tableWidget.setItem(row, 0, QTableWidgetItem(t.judul))
+            self.tableWidget.setItem(row, 1, QTableWidgetItem(t.deadline))
+            self.tableWidget.setItem(row, 2, QTableWidgetItem("Selesai" if t.status else "Belum Selesai"))
             
     def viewSelectedTugas(self):
         self.stackedWidget.setCurrentIndex(3)
         selected_row = self.tableWidget.currentRow()
         if selected_row >= 0:
-            print(f"Selected row: {selected_row}")
+            t = self.tugas_list[selected_row]
+            details = (
+            f"Judul      : {t.judul}\n"
+            f"Deskripsi  : {t.deskripsi}\n"
+            f"Deadline   : {t.deadline}\n"
+            f"Status     : {'Selesai' if t.status else 'Belum Selesai'}"
+            )
+            self.textBrowserDetails.setText(details)
         else:
-            QMessageBox.warning(self, "Pilih Tuags", "Silahkan pilih tugas terlebih dahulu.")
-            
+            QMessageBox.warning(self, "Pilih Tugas", "Silahkan pilih tugas terlebih dahulu.")
+
     def editTugas(self):
         self.stackedWidget.setCurrentIndex(4)
         selected_row = self.tableWidget.currentRow()
@@ -86,6 +97,7 @@ class MyWindow(QMainWindow):
                 self.viewAttribute()
 
 app = QApplication([])
+apply_stylesheet(app, theme='dark_blue.xml')
 window = MyWindow()
 window.show()
 app.exec()
