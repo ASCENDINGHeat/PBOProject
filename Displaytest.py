@@ -33,20 +33,24 @@ class MyWindow(QMainWindow):
         add_tugas(tugas_obj)
         QMessageBox.information(self, "Success", f"Tugas '{tugas_obj.judul}' added successfully!")
         self.stackedWidget.setCurrentIndex(1)
+        self.viewAttribute()
 
     def viewAttribute(self):
         self.tugas_list = load_tugas()
         self.tableWidget.setRowCount(len(self.tugas_list))
-        self.tableWidget.setColumnCount(4)
-        self.tableWidget.setHorizontalHeaderLabels(["Judul", "Deskripsi", "Deadline", "Status"])
+        self.tableWidget.setColumnCount(1)
+        self.tableWidget.setHorizontalHeaderLabels(["Judul"])
         for row, t in enumerate(self.tugas_list):
             self.tableWidget.setItem(row, 0, QTableWidgetItem(t.judul))
-            self.tableWidget.setItem(row, 1, QTableWidgetItem(t.deskripsi))
-            self.tableWidget.setItem(row, 2, QTableWidgetItem(t.deadline))
-            status_text = "Selesai" if t.status else "Belum Selesai"
-            self.tableWidget.setItem(row, 3, QTableWidgetItem(status_text))
-        # Optionally update textBrowser as before
-
+            
+    def viewSelectedTugas(self):
+        self.stackedWidget.setCurrentIndex(3)
+        selected_row = self.tableWidget.currentRow()
+        if selected_row >= 0:
+            print(f"Selected row: {selected_row}")
+        else:
+            QMessageBox.warning(self, "Pilih Tuags", "Silahkan pilih tugas terlebih dahulu.")
+            
     def editTugas(self):
         self.stackedWidget.setCurrentIndex(4)
         selected_row = self.tableWidget.currentRow()
@@ -68,6 +72,7 @@ class MyWindow(QMainWindow):
             QMessageBox.information(self, "Success", "Tugas berhasil diubah!")
             self.stackedWidget.setCurrentIndex(1)
             self.selected_row = None
+            self.viewAttribute()
 
     def deleteTugas(self):
         selected_row = self.tableWidget.currentRow()
@@ -78,6 +83,7 @@ class MyWindow(QMainWindow):
                 self.tableWidget.removeRow(selected_row)
                 save_all_tugas(self.tugas_list)
                 QMessageBox.information(self, "Success", "Tugas berhasil dihapus!")
+                self.viewAttribute()
 
 app = QApplication([])
 window = MyWindow()
