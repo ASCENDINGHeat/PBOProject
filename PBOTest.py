@@ -56,7 +56,7 @@ class tugas:
                     line = f"{self.judul}, {self.deskripsi}, {self.deadline}\n"
                 f.write(line)
 
-    def tandaiSelesai(self):
+    def tandaiSelesai(self, tugas_list, filename =""):
         self.status = True
         
     def HapusTugas(self):
@@ -71,38 +71,38 @@ class tugas:
         
         lines.sort(key=lambda x: datetime.strptime(x.split(',')[2], '%d-%m-%Y %H:%M'))
 
-def load_tugas(filename="tugas_data.txt"):
-    tugas_list = []
-    try:
-        with open(filename, "r", encoding="utf-8") as f:
-            lines = f.read().split("--------------------------\n")
-            for entry in lines:
-                if entry.strip():
-                    parts = entry.strip().split("\n")
-                    if len(parts) >= 4:
-                        judul = parts[0]
-                        deskripsi = parts[1]
-                        deadline = parts[2]
-                        status = parts[3] == "True"
-                        tugas_obj = tugas(judul, deskripsi, deadline, status)
-                        tugas_list.append(tugas_obj)
-    except FileNotFoundError:
-        pass
-    return tugas_list
+    def load_tugas(filename="tugas_data.txt"):
+        tugas_list = []
+        try:
+            with open(filename, "r", encoding="utf-8") as f:
+                lines = f.read().split("--------------------------\n")
+                for entry in lines:
+                    if entry.strip():
+                        parts = entry.strip().split("\n")
+                        if len(parts) >= 4:
+                            judul = parts[0]
+                            deskripsi = parts[1]
+                            deadline = parts[2]
+                            status = parts[3] == "True"
+                            tugas_obj = tugas(judul, deskripsi, deadline, status)
+                            tugas_list.append(tugas_obj)
+        except FileNotFoundError:
+            pass
+        return tugas_list
 
-def save_all_tugas(tugas_list, filename="tugas_data.txt"):
-    with open(filename, "w", encoding="utf-8") as f:
-        for tugas_obj in tugas_list:
+    def save_all_tugas(tugas_list, filename="tugas_data.txt"):
+        with open(filename, "w", encoding="utf-8") as f:
+            for tugas_obj in tugas_list:
+                f.write(f"{tugas_obj.judul}\n{tugas_obj.deskripsi}\n{tugas_obj.deadline}\n{tugas_obj.status}\n--------------------------\n")
+
+    def add_tugas(tugas_obj, filename="tugas_data.txt"):
+        with open(filename, "a", encoding="utf-8") as f:
             f.write(f"{tugas_obj.judul}\n{tugas_obj.deskripsi}\n{tugas_obj.deadline}\n{tugas_obj.status}\n--------------------------\n")
 
-def add_tugas(tugas_obj, filename="tugas_data.txt"):
-    with open(filename, "a", encoding="utf-8") as f:
-        f.write(f"{tugas_obj.judul}\n{tugas_obj.deskripsi}\n{tugas_obj.deadline}\n{tugas_obj.status}\n--------------------------\n")
-
-def sorting_tugas_deadline(tugas_list):
-    return sorted(
-        tugas_list, key=lambda t: datetime.strptime(str(t.deadline), '%d-%m-%Y %H:%M') if isinstance(t.deadline, str) else t.deadline
-    )
+    def sorting_tugas_deadline(tugas_list):
+        return sorted(
+            tugas_list, key=lambda t: datetime.strptime(str(t.deadline), '%d/%m/%Y %H:%M') if isinstance(t.deadline, str) else t.deadline
+        )
 
 
 
