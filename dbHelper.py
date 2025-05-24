@@ -1,5 +1,4 @@
 import sqlite3
-import hashlib
 
 class DBHelper:
     def __init__(self, email):
@@ -23,17 +22,17 @@ class DBHelper:
     def tambah_tugas(self, judul, deskripsi, deadline):
         with self.conn:
             self.cursor.execute(
-            "INSERT INTO Tugas (judulTugas, deskripsiTugas, deadLine) VALUES (?, ?, ?)",
-            (judul, deskripsi, deadline)
-        )
+                "INSERT INTO Tugas (judulTugas, deskripsiTugas, deadLine) VALUES (?, ?, ?)",
+                (judul, deskripsi, deadline)
+            )
         
         
     def edit_tugas(self, tugas_id, deskripsi_baru, deadline_baru):
         with self.conn:
             self.cursor.execute(
-            "UPDATE Tugas SET deskripsiTugas = ?, deadLine = ? WHERE id = ?",
-            (deskripsi_baru, deadline_baru, tugas_id)
-        )
+                "UPDATE Tugas SET deskripsiTugas = ?, deadLine = ? WHERE id = ?",
+                (deskripsi_baru, deadline_baru, tugas_id)
+            )
         
 
     def lihat_semua_tugas(self):
@@ -53,4 +52,3 @@ class DBHelper:
     def hapus_tugas(self, tugas_id):
         with self.conn:
             self.cursor.execute("DELETE FROM Tugas WHERE id = ?", (tugas_id,))
-
