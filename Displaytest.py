@@ -1,6 +1,8 @@
 from PyQt6 import uic
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidgetItem
 from PyQt6.QtCore import QDateTime
+import sqlite3
+from LoginTest2 import *
 from PBOTest import tugas
 from qt_material import apply_stylesheet
 
@@ -8,6 +10,7 @@ class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("UItest.ui", self)
+        self.conn = sqlite3.connect("TugasUser.db")
         self.stackedWidget.setCurrentIndex(0)
         self.pushButtonLOGIN.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(1), self.viewAttribute()))
         self.pushButtonFILL.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(2))
@@ -53,12 +56,14 @@ class MyWindow(QMainWindow):
         tugas_obj = tugas(judul, deskripsi, deadline, status)
         self.tugas_list.append(tugas_obj)
         tugas.add_tugas(tugas_obj)
+        
         QMessageBox.information(self, "Success", f"Tugas '{tugas_obj.judul}' added successfully!")
         self.stackedWidget.setCurrentIndex(1)
         self.viewAttribute()
 
-    def viewAttribute(self):
-        self.tugas_list = tugas.load_tugas()
+    def viewAttribute(self,):
+        
+        self.tugas_list = tugas.load_tugas()    
         self.tableWidget.setRowCount(len(self.tugas_list))
         self.tableWidget.setColumnCount(3)
         self.tableWidget.setHorizontalHeaderLabels(["Judul", "Deadline","Status"])
