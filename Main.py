@@ -7,6 +7,17 @@ from Logic import tugas
 from LoginLogic import User, AuthSystem
 from datetime import datetime
 from qt_material import apply_stylesheet
+import sys
+import os
+
+if getattr(sys, 'frozen', False):
+    # Running in a bundle
+    base_path = sys._MEIPASS
+else:
+    # Running in normal Python
+    base_path = os.path.dirname(__file__)
+
+ui_path = os.path.join(base_path, "UItest.ui")
 
 class MyWindow(QMainWindow):
     def __init__(self):
@@ -30,7 +41,6 @@ class MyWindow(QMainWindow):
         self.pushButtonRegisterPage.clicked.connect(self.registerUser)
         self.pushButtonBackRegist.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         self.tableWidget.itemSelectionChanged.connect(self.viewSelectedTugas)
-        self.updateOverdueLabel()
 
         self.tugas_list = []
         self.selected_row = None
