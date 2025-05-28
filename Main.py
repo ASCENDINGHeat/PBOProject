@@ -47,6 +47,11 @@ class MyWindow(QMainWindow):
         self.conn = sqlite3.connect("TugasUser.db",check_same_thread=False)
         self.auth = AuthSystem(self.conn)
         self.user_id = None
+        try:
+            tugas.init_db("TugasUser.db")
+        except Exception as e:
+            QMessageBox.critical(self, "Database Error", f"Gagal membuat/mengakses database: {e}")
+            sys.exit(1)        
 
         # Set table header resize mode
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
