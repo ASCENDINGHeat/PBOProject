@@ -3,8 +3,9 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidget
 from PyQt6.QtCore import QDateTime
 from PyQt6.QtCore import Qt
 import sqlite3
-from PBOTest import tugas
-from PBOlogintest import User, AuthSystem
+from Logic import tugas
+from LoginLogic import User, AuthSystem
+from datetime import datetime
 from qt_material import apply_stylesheet
 
 class MyWindow(QMainWindow):
@@ -14,7 +15,8 @@ class MyWindow(QMainWindow):
         
         self.stackedWidget.setCurrentIndex(0)
         self.pushButtonLOGIN.clicked.connect(lambda :self.loginPage())
-        self.pushButtonFILL.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(2), self.dateTimeEdit.setDateTime(QDateTime.currentDateTime()))
+        self.pushButtonFILL.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(2))
+        self.dateTimeEdit.setDateTime(QDateTime.currentDateTime())
 
         self.pushButtonSubmit.clicked.connect(self.fillAtrribute)
         self.pushButtonBackDetail.clicked.connect(lambda: (self.stackedWidget.setCurrentIndex(1), self.viewAttribute()))
@@ -28,6 +30,7 @@ class MyWindow(QMainWindow):
         self.pushButtonRegisterPage.clicked.connect(self.registerUser)
         self.pushButtonBackRegist.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         self.tableWidget.itemSelectionChanged.connect(self.viewSelectedTugas)
+        self.updateOverdueLabel()
 
         self.tugas_list = []
         self.selected_row = None
@@ -251,6 +254,8 @@ class MyWindow(QMainWindow):
 
 app = QApplication([])
 apply_stylesheet(app, theme='dark_blue.xml')
+# with open("cobacss.qss", "r") as f:
+#     app.setStyleSheet(f.read())
 window = MyWindow()
 window.show()
 app.exec()

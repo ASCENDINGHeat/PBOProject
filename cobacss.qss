@@ -1,18 +1,78 @@
 QWidget {
-    background-color: #f0f0f0;
-    font-family: Arial, sans-serif;
+    background-color:rgb(29, 29, 29);
+    font-family: 'Roboto', Arial, sans-serif;
+    color:rgb(255, 255, 255);
 }
+
 QLabel {
-    color: #333;
-    font-size: 18px;
+    color:rgb(255, 255, 255);
+    font-size: 16px;
+    letter-spacing: 0.5px;
 }
+
 QPushButton {
-    background-color: #007BFF;
-    color: white;
+    background-color:rgb(35, 156, 255);
+    color: #fff;
     border: none;
-    padding: 8px 16px;
     border-radius: 4px;
+    padding: 8px 24px;
+    font-size: 15px;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(33,150,243,0.15);
+    transition: background 0.2s;
 }
+
 QPushButton:hover {
-    background-color: #0056b3;
+    background-color:rgb(0, 92, 184);
+}
+
+QPushButton:pressed {
+    background-color:rgb(0, 92, 184);
+}
+
+QLineEdit, QDateTimeEdit, QComboBox {
+    background: #fff;
+    border: 1.5px solid #BDBDBD;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 15px;
+    color: #212121;
+}
+
+QLineEdit:focus, QDateTimeEdit:focus, QComboBox:focus {
+    border: 2px solid rgb(0, 92, 184);
+    outline: none;
+}
+
+QTableWidget {
+    background: rgb(47, 47, 47);
+    border: 1px solid #E0E0E0;
+    gridline-color: #E0E0E0;
+    font-size: 15px;
+}
+
+QHeaderView::section {
+    background-color: #F5F5F5;
+    color: #616161;
+    font-weight: 500;
+    border: none;
+    border-bottom: 2px solid #2196F3;
+    padding: 8px;
+}
+
+QScrollBar:vertical {
+    background: #F5F5F5;
+    width: 10px;
+    margin: 0px 0px 0px 0px;
+    border-radius: 5px;
+}
+QScrollBar::handle:vertical {
+    background: #BDBDBD;
+    min-height: 20px;
+    border-radius: 5px;
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0;
+    background: none;
+    border: none;
 }
