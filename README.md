@@ -6,7 +6,13 @@
 
 ### Running Instructions
 1. Install Python if not already installed.
-2. Open the project folder.
-3. Start the app using the provided `run_app.bat` script.
+2. Clone this Repository
+3. Open the project folder.
+4. Start the app using the provided `run_app.bat` script.
+
+> **Note:**  
+> When running the `run_app.bat` or the generated `.exe` for the first time, Windows SmartScreen may show a warning.  
+> Click **"More info"** and then **"Run anyway"** to proceed.  
+> This is normal for new or unsigned applications.
 
 ---
