@@ -6,7 +6,7 @@
 
 ### Running Instructions
 1. Install Python if not already installed.
-2. Clone this Repository
+2. Clone/Download this Repository
 3. Open the project folder.
 4. Start the app using the provided `run_app.bat` script.
 
