@@ -170,25 +170,47 @@ class MyWindow(QMainWindow):
     def editTugas(self):
         self.stackedWidget.setCurrentIndex(4)
         selected_row = self.tableWidget.currentRow()
-        if selected_row >= 0:
-            self.selected_row = selected_row
-            self.lineEdit.setText(self.tableWidget.item(selected_row, 0).text())
-            self.lineEdit_2.setText(self.tableWidget.item(selected_row, 1).text())
-            deadline_str = self.tableWidget.item(selected_row, 2).text()
-            dt = QDateTime.fromString(deadline_str, 'dd/MM/yyyy HH:mm')
+        if selected_row < 0:
+            self.NameMainPage.setText("Tidak ada tugas dipilih")
+            self.DescriptionMainPage.setText("")
+            self.DeadlineMainPage.setText("")
+            return
+        tasks = tugas.get_tasks(self.conn, self.user_id)
+        if selected_row < len(tasks):
+            task = tasks[selected_row]
+            judul = task[2]
+            deskripsi = task[3]
+            deadline = task[4]
+            status = "Selesai" if task[5] else "Belum Selesai"
+
+            self.lineEdit.setText(judul)
+            self.lineEdit_2.setText(deskripsi)
+            dt = QDateTime.fromString(deadline, 'dd/MM/yyyy HH:mm')
             self.dateTimeEdit_2.setDateTime(dt)
+
+            self.selected_row = selected_row  # <-- ADD THIS LINE
 
     def saveEditedTugas(self):
         if self.selected_row is not None:
-            task_id = self.tableWidget.item(self.selected_row, 0).data(Qt.UserRole)
+            item = self.tableWidget.item(self.selected_row, 0)
+            if not item:
+                QMessageBox.warning(self, "Error", "Tugas tidak ditemukan.")
+                return
+            task_id = item.data(Qt.ItemDataRole.UserRole)
+            if task_id is None:
+                QMessageBox.warning(self, "Error", "ID tugas tidak valid.")
+                return
+
             judul = self.lineEdit.text()
             deskripsi = self.lineEdit_2.text()
             deadline = self.dateTimeEdit_2.dateTime().toString('dd/MM/yyyy HH:mm')
 
-            tugas.edit_task(self.conn, task_id, judul=judul, deskripsi=deskripsi, deadline=deadline)
-            self.viewAttribute()
-            self.stackedWidget.setCurrentIndex(1)
-            self.selected_row = None
+            if tugas.edit_task(self.conn, task_id, judul=judul, deskripsi=deskripsi, deadline=deadline):
+                self.viewAttribute()
+                self.stackedWidget.setCurrentIndex(1)
+                self.selected_row = None
+            else:
+                QMessageBox.warning(self, "Error", "Gagal mengedit tugas.")
 
     def deleteTugas(self):
         selected_indexes = self.tableWidget.selectionModel().selectedRows()
