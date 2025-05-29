@@ -51,9 +51,7 @@ class MyWindow(QMainWindow):
             tugas.init_db("TugasUser.db")
         except Exception as e:
             QMessageBox.critical(self, "Database Error", f"Gagal membuat/mengakses database: {e}")
-            sys.exit(1)        
-
-        # Set table header resize mode
+            sys.exit(1)
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
     def sortTugas(self):
@@ -88,7 +86,7 @@ class MyWindow(QMainWindow):
             QMessageBox.warning(self, "Item Kosong", "Baris tugas tidak lengkap. Refresh data.")
             return
 
-        task_id = judul_item.data(Qt.ItemDataRole.UserRole)  # ← pastikan ini digunakan
+        task_id = judul_item.data(Qt.ItemDataRole.UserRole)
         if not task_id:
             QMessageBox.warning(self, "ID Tugas Kosong", "Tugas tidak punya ID. Refresh data.")
             return
@@ -115,11 +113,11 @@ class MyWindow(QMainWindow):
         self.stackedWidget.setCurrentIndex(1)
 
     def viewAttribute(self):
-    # Ambil data tugas dari database untuk user yang sedang login
+        # Ambil data tugas dari database untuk user yang sedang login
         if not hasattr(self, 'user_id'):
             QMessageBox.warning(self, "Error", "User belum login.")
             return
-        self.tableWidget.setRowCount(0)  # Clear previous rows
+        self.tableWidget.setRowCount(0)
         tasks = tugas.get_tasks(self.conn ,self.user_id)
         
         self.tableWidget.setRowCount(len(tasks))
@@ -128,8 +126,8 @@ class MyWindow(QMainWindow):
         for row, task in enumerate(tasks):
             #self.tableWidget.insertRow(row)
 
-            item_judul = QTableWidgetItem(task[2])  # judul
-            item_judul.setData(Qt.ItemDataRole.UserRole, task[0])  # simpan task.id
+            item_judul = QTableWidgetItem(task[2])
+            item_judul.setData(Qt.ItemDataRole.UserRole, task[0])
 
             item_deadline = QTableWidgetItem(task[4])
             item_status = QTableWidgetItem("Selesai" if task[5] else "Belum Selesai")
@@ -145,12 +143,11 @@ class MyWindow(QMainWindow):
         #self.stackedWidget.setCurrentIndex(3)
         selected_row = self.tableWidget.currentRow()
         if selected_row < 0:
-        # Kosongkan detail view jika tidak ada yang dipilih
             self.NameMainPage.setText("Tidak ada tugas dipilih")
             self.DescriptionMainPage.setText("")
             self.DeadlineMainPage.setText("")
             return
-            # Get tasks from DB to find the correct id and details
+            
         tasks = tugas.get_tasks(self.conn, self.user_id)
         if selected_row < len(tasks):
             task = tasks[selected_row]
@@ -160,7 +157,6 @@ class MyWindow(QMainWindow):
             deadline = task[4]
             status = "Selesai" if task[5] else "Belum Selesai"
 
-            # Set details to the widgets in DetailedView
             self.NameMainPage.setText(judul)
             self.DescriptionMainPage.setText(deskripsi)
             self.DeadlineMainPage.setText(f"Deadline: {deadline} | Status: {status}")
@@ -242,12 +238,12 @@ class MyWindow(QMainWindow):
     def loginPage(self):
         username = self.lineEditUsername.text()
         password = self.lineEditPassword.text()
-        user = self.auth.login(username, password)  # auth is your AuthSystem instance
+        user = self.auth.login(username, password)
 
         if user:
-            self.user_id = user.id  # Store user id for session
+            self.user_id = user.id
             self.stackedWidget.setCurrentIndex(1)
-            self.viewAttribute()  # Load user-specific tasks
+            self.viewAttribute()
             QMessageBox.information(self, "Login Berhasil", f"Selamat datang, {user.username}!")
         else:
             QMessageBox.warning(self, "Login Gagal", "Username/email atau password salah.")
@@ -270,7 +266,6 @@ class MyWindow(QMainWindow):
     def getDetail(self):
         selected_row = self.tableWidget.currentRow()
         if selected_row >= 0:
-            # Get tasks from DB to find the correct id and details
             tasks = self.tugas_manager.get_tasks(self.user_id)
             if selected_row < len(tasks):
                 task = tasks[selected_row]
@@ -280,7 +275,6 @@ class MyWindow(QMainWindow):
                 deadline = task[4]
                 status = "Selesai" if task[5] else "Belum Selesai"
 
-                # Set details to the widgets in DetailedView
                 self.NameLabelDetail.setText(judul)
                 self.DescriptionDetail.setText(deskripsi)
                 self.DeadlineDetail.setText(f"Deadline: {deadline} | Status: {status}")
